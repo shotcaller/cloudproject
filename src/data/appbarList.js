@@ -1,0 +1,1 @@
+export const appbarList = ["Dashboard", "Tickets", "Settings"];
