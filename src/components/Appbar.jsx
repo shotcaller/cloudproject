@@ -3,10 +3,9 @@ import { Menu, AccountCircle, Mail } from "@mui/icons-material"
 import { appbarList } from "../data/appbarList"
 import { useState } from "react"
 
-export const Appbar = () => {
+export const Appbar = (props) => {
     const [auth, setAuth] = useState(true)
     const [toggleDrawer, setToggleDrawer] = useState(false);
-    console.log(appbarList)
     const handleDrawer = (drawerState) => {
         setToggleDrawer((toggle) => !toggle)
     }
@@ -15,7 +14,7 @@ export const Appbar = () => {
         <Box sx={{ width: 250 }} role="presentation" onClick={handleDrawer}>
             <Typography variant="h2">Lesgo</Typography>
             <List>
-                {["Dashboard", "Tickets", "Settings"].map((text, index) => (
+                {appbarList.map((text, index) => (
                     <ListItem key={text} disablePadding>
                         <ListItemButton>
                             <ListItemIcon>
@@ -61,7 +60,7 @@ export const Appbar = () => {
             </AppBar>
             
         </Box>
-        
+        {props.children}
         </>
     )
 }
