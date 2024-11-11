@@ -2,6 +2,7 @@ import { AppBar, Box, Drawer, IconButton, List, ListItem, ListItemButton, ListIt
 import { Menu, AccountCircle, Mail } from "@mui/icons-material"
 import { appbarList } from "../data/appbarList"
 import { useState } from "react"
+import { appSubtitle, appTitle } from "../data/defaultStrings"
 
 export const Appbar = (props) => {
     const [auth, setAuth] = useState(true)
@@ -42,7 +43,7 @@ export const Appbar = (props) => {
                         <Menu />
                     </IconButton>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Cloud5
+                        {appTitle}
                     </Typography>
                     { auth && (
                     <div>

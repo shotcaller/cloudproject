@@ -1,18 +1,45 @@
-import { Button, Card, CardActions, CardContent, Divider, Typography } from '@mui/material'
-import React from 'react'
+import { Box, Button, Card, CardActions, CardContent, Container, Dialog, DialogTitle, Divider, Modal, Typography } from '@mui/material'
+import { useTheme } from '@mui/material/styles';
+import React, { useState } from 'react'
+import { TicketDetails } from './TicketDetails';
 
 export const Ticket = (props) => {
-    const {id, title, status, priority, assignedTo} = props;
+    const [openMore, setOpenMore] = useState(false);
+    const handleOpenMore = () => setOpenMore(true);
+    const handleCloseMore = () => setOpenMore(false);
+
+    const theme = useTheme();
+    
+    const priorityColors = {
+        'low' : theme.palette.success.main,
+        'medium' : theme.palette.warning.light,
+        'high' : theme.palette.error.light
+    }
+
+    const secondaryColor = `${priorityColors[`${props.priority.toLowerCase()}`]}`;
+    console.log(theme.palette)
+    const {id, title, status, priority, assignedTo,} = props;
   return (
+    <>
     <Card>
         <CardContent>
+            <Box>
+            <Typography variant='caption' component="div"  gutterBottom sx={{ background: secondaryColor }}>#{id}</Typography>
             <Typography variant='h6' gutterBottom>{title}</Typography>
             <Divider />
-            <Typography variant='body'>Priority: {priority}</Typography>
+            </Box>
+            
+            <Typography variant='body' component="div">Priority: {priority}</Typography>
+            <Typography variant='body' component="div">Assigned To: {assignedTo}</Typography>
+
         </CardContent>
         <CardActions>
-            <Button size="small">View More</Button>
+            <Button size="small" onClick={handleOpenMore}>View More</Button>
         </CardActions>
     </Card>
+    <Dialog open={openMore} onClose={handleCloseMore} maxWidth="xl" fullWidth={true}>
+        <TicketDetails {...props } closeMore={handleCloseMore} />
+    </Dialog>
+    </>
   )
 }

@@ -26,7 +26,7 @@ const TicketBlock = (props) => {
                 <Typography variant='h5'>{props.title}</Typography>
                 </Card>
                 {
-                    ticketList.map((ticket, index) => <Ticket key={index} title={ticket} priority="Low" />)
+                    ticketList.map((ticket, index) => <Ticket key={index} id={123456} title={ticket} priority="High" assignedTo="Ruturaj" />)
                 }
                 
                 </Stack>
