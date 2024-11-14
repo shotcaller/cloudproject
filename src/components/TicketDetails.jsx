@@ -2,7 +2,7 @@ import { ArrowDropDown, Close } from '@mui/icons-material';
 import { Autocomplete, Box, Button, ButtonGroup, ClickAwayListener, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grow, IconButton, InputLabel, MenuItem, MenuList, Paper, Popper, Select, TextField, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { ticketDetailDescriptionPlaceholder } from '../data/defaultStrings';
-import { priorityList, statusList } from '../data/TicketDetailsLists';
+import { dummyUsersList, priorityList, statusList } from '../data/TicketDetailsLists';
 
 export const TicketDetails = (props) => {
     const {id, title, description, status, priority, assignedTo} = props;
@@ -11,7 +11,9 @@ export const TicketDetails = (props) => {
 
   return (
     <>
-            <DialogTitle sx={{ display: 'flex', justifyContent: "space-between"}}>{title}
+            <DialogTitle sx={{ display: 'flex', justifyContent: "space-between"}}>
+                <Typography component="span">#{id}</Typography> 
+                {title}
                 <IconButton onClick={props.closeMore}>
                     <Close/>
                 </IconButton></DialogTitle>
@@ -119,20 +121,8 @@ const AssignedToSelection = (props) => {
     //Getting assignedTo value prop
     const [selectedUser, setSelectedUser] = useState(props.assignedTo??"");
 
-    const users = [
-        { id: 1, name: "Rutu"},
-        { id: 2, name: "Sam"},
-        { id: 3, name: "Disha"},
-        { id: 4, name: "Vedita"},
-        { id: 5, name: "Vaishnavi"},
-        { id: 6, name: "BHargav"},
-        { id: 7, name: "Omkar"},
-        { id: 8, name: "Nimisha"},
-        { id: 9, name: "Sangita"},
-        { id: 10, name: "Ameya"},
-        { id: 11, name: "Kody"},
+    const users = dummyUsersList;
 
-    ]
     return (
         <Autocomplete
             disablePortal

@@ -17,7 +17,7 @@ export const Ticket = (props) => {
     }
 
     const secondaryColor = `${priorityColors[`${props.priority.toLowerCase()}`]}`;
-    console.log(theme.palette)
+    
     const {id, title, status, priority, assignedTo,} = props;
   return (
     <>
