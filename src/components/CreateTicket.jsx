@@ -70,7 +70,7 @@ const CreateTicketForm = (props) => {
                 ))}
             </ToggleButtonGroup>
 
-            <Autocomplete sx={{ mb: 3 }} disablePortal getOptionLabel={(option) => option.name} options={dummyUsersList}
+            <Autocomplete disabled={userRole==='Customer'} sx={{ mb: 3 }} disablePortal getOptionLabel={(option) => option.name} options={dummyUsersList}
             renderInput={(params) => <TextField  {...params} {...register("assignedTo")} label={"Please select a user"} />}
              />
 

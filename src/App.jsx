@@ -2,26 +2,40 @@ import { createTheme, ThemeProvider, Typography } from '@mui/material'
 import './App.css'
 import { Appbar } from './components/Appbar'
 import { TicketsPage } from './components/TicketsPage'
-import { Provider } from 'react-redux'
-import store from './store/store'
+import { useSelector } from 'react-redux'
+import { LoginPage } from './components/LoginPage'
+import { useState } from 'react'
+import {DashboardPage } from './components/DashboardPage'
+import { AssignedToMePage } from './components/AssignedToMePage'
 
 
 function App() {
+
+  //Used conditional logic to route between pages, can use react router later as time crunch
 
   const theme = createTheme({
     palette: {}
   })
 
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+
+  // 0 - Dashboard, 1 - All Tickets, 2 - Assigned To Me
+  const [menuPage, setMenuPage] = useState(0);
+
+
   return (
     <>
-    <Provider store={store}>
     <ThemeProvider theme={theme}>
-    <Appbar>
-        <TicketsPage />
-      </Appbar>
+      <Appbar changeMenuPage={setMenuPage}>
+      {isLoggedIn?
+        ((menuPage === 0 && <DashboardPage />) ||
+        (menuPage === 1 && <TicketsPage />) ||
+        (menuPage === 2 && <AssignedToMePage />))
+        :
+      <LoginPage />
+      }
+    </Appbar>
     </ThemeProvider>
-
-    </Provider>      
     </>
   )
 }

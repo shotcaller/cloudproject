@@ -11,7 +11,7 @@ export const TicketsPage = () => {
   return (
     <Box sx={{ margin: 2 }}>
     <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
-        <Typography variant='h3' component='span'>Tickets</Typography>
+        <Typography variant='h3' component='span'>All Tickets</Typography>
         <Button onClick={() => setOpenCreate(true)} variant='contained' endIcon={<Add />} size='large' sx={{ justifyContent: 'center'}}>Create</Button>
     </Box>
     <Box>

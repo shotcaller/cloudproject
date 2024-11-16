@@ -14,3 +14,4 @@ export const dummyUsersList = [
     { id: 11, name: "Kody"},
 
 ];
+export const userTypes = ["Customer", "Customer Support"];

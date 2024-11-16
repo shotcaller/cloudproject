@@ -1,1 +1,1 @@
-export const appbarList = ["Dashboard", "Tickets", "Settings"];
+export const appbarList = ["Dashboard", "All Tickets", "Assigned To Me"];
