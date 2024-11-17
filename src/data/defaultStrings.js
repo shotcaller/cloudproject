@@ -5,3 +5,5 @@ export const createTicketDialogTitle = "Create a ticket";
 export const bcryptSaltRounds = 10;
 export const userRegSuccess = "User registered successfully!"
 export const userRegFailed = "User already exists"
+export const userLoginSuccess = "User logged in successfully!";
+export const userLoginFailed = "Incorrect username or password";

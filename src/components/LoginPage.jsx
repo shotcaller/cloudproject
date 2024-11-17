@@ -7,8 +7,8 @@ import { userTypes } from '../data/TicketDetailsLists'
 import axios from 'axios'
 import { startLoader, stopLoader } from '../store/loaderSlice'
 import { openPopup } from '../store/popupSlice'
-import { userRegFailed, userRegSuccess } from '../data/defaultStrings'
-import { registerUser } from '../data/apiLinks'
+import { userLoginFailed, userLoginSuccess, userRegFailed, userRegSuccess } from '../data/defaultStrings'
+import { loginUser, registerUser } from '../data/apiLinks'
 
 export const LoginPage = () => {
   return (
@@ -45,16 +45,26 @@ const LoginRegister = () => {
             console.log(loginPayload);
             dispatch(startLoader())
             try{   
-                const res = await axios.get('/aaaa', loginPayload);
+                const res = await axios.post(loginUser, loginPayload);
                 if(res) {
                     dispatch(login({
-                        userId: '12345',
-                        userName: 'Ruturaj',
-                        userRole: 'Customer Support' 
+                        userId: res.userid,
+                        userName: res.username,
+                        userRole: res.user_type 
                     }));
                     //Show succcess message
+                    dispatch(openPopup({
+                        severity: 'success',
+                        message: userLoginSuccess
+                    }))
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error(e);
+                dispatch(openPopup({
+                    severity: 'error',
+                    message: userLoginFailed
+                }))
+            }
             finally { dispatch(stopLoader()); }
             
         }
@@ -73,7 +83,7 @@ const LoginRegister = () => {
                     setPageType('Login');
                 }
             } catch(e) {
-                console.log(e); 
+                console.error(e); 
                 dispatch(openPopup({
                     severity: 'error',
                     message: userRegFailed
