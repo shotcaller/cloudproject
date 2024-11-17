@@ -5,6 +5,9 @@ import { createTicketDialogTitle } from '../data/defaultStrings';
 import { useForm } from 'react-hook-form';
 import { dummyUsersList, priorityList } from '../data/TicketDetailsLists';
 import { useSelector } from 'react-redux';
+import axios from 'axios';
+import delay from '../utils/delay';
+import { Loader } from './Loader';
 
 const Transition = forwardRef((props, ref) => <Slide direction='up' ref={ref} {...props} />)
 
@@ -47,10 +50,21 @@ const CreateTicketForm = (props) => {
 
     const { register, handleSubmit, formState: { errors }} = useForm();
     const {userId, userName, userRole, isLoggedIn } = useSelector((state) => state.user)
+    const [loading, setLoading] = useState(false)
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         console.log({...data, priority, userId, userName});
-        props.handleCloseDialog();
+        setLoading(true)
+        await delay();
+        const res = await axios.post('', { ...data, priority, userId, userName } )
+        if(res){
+            props.handleCloseDialog();
+            setLoading(false)
+        }
+        else {
+            console.log("Error while creating ticket");
+            setLoading(false);
+        }
     }
 
     const handlePriorityChange = (event, newPriority) => {
@@ -75,7 +89,7 @@ const CreateTicketForm = (props) => {
              />
 
              <Button variant='contained' type='submit'>Create Ticket</Button>
-
+             <Loader open={loading} />
         </Box>
     )
 }

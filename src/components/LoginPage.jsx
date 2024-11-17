@@ -4,6 +4,11 @@ import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { login } from '../store/userSlice'
 import { userTypes } from '../data/TicketDetailsLists'
+import axios from 'axios'
+import { startLoader, stopLoader } from '../store/loaderSlice'
+import { openPopup } from '../store/popupSlice'
+import { userRegFailed, userRegSuccess } from '../data/defaultStrings'
+import { registerUser } from '../data/apiLinks'
 
 export const LoginPage = () => {
   return (
@@ -33,24 +38,49 @@ const LoginRegister = () => {
         pageType==='Login'? setPageType('Register'): setPageType('Login');
     }
 
-    const onSubmitLogin = (data) => {
+    const onSubmitLogin = async (data) => {
         if(pageType==='Login'){
             let { username, password } = data; 
             const loginPayload = { username, password };
             console.log(loginPayload);
-
-            //On success verify
-            dispatch(login({
-                userId: '12345',
-                userName: 'Ruturaj',
-                userRole: 'Customer' 
-            }));
+            dispatch(startLoader())
+            try{   
+                const res = await axios.get('/aaaa', loginPayload);
+                if(res) {
+                    dispatch(login({
+                        userId: '12345',
+                        userName: 'Ruturaj',
+                        userRole: 'Customer Support' 
+                    }));
+                    //Show succcess message
+                }
+            } catch (e) {}
+            finally { dispatch(stopLoader()); }
+            
         }
         else {
             let { newUsername, newPassword, userType } = data;
-            const registerPayload = { newUsername, newPassword, userType };
+            const registerPayload = { username: newUsername, password: newPassword, user_type: userType };
             console.log(registerPayload);
-            setPageType('Register');
+            dispatch(startLoader())
+            try{
+                const res = await axios.post(registerUser, registerPayload);
+                if(res){
+                    dispatch(openPopup({
+                        severity: 'success',
+                        message: userRegSuccess
+                    }))
+                    setPageType('Login');
+                }
+            } catch(e) {
+                console.log(e); 
+                dispatch(openPopup({
+                    severity: 'error',
+                    message: userRegFailed
+                }))
+            } finally {
+                dispatch(stopLoader())
+            }
         }
     }
     
@@ -64,13 +94,13 @@ const LoginRegister = () => {
                 </Box>
                 <Box component='form' onSubmit={handleSubmit(onSubmitLogin)}>
                 {pageType==='Login' && <Box p={2}>
-                    <TextField sx={{mb: 3}} helperText={errors.username?"Please enter a username":''} label="Username" error={errors.username} fullWidth {...register("username", { required: true })}  />
-                    <TextField sx={{mb: 3}} helperText={errors.username?"Please enter a password":''} label="Password" error={errors.password} fullWidth {...register("password", {required: true })} />
+                    <TextField sx={{mb: 3}} helperText={errors.username?.message} label="Username" error={errors.username?.message.length>0} fullWidth {...register("username", { required:"Please enter a username" })}  />
+                    <TextField sx={{mb: 3}} helperText={errors.username?.message} label="Password" error={errors.password?.message.length>0} fullWidth {...register("password", {required:"Please enter a password" })} />
                 </Box>}
                 {pageType==='Register' && <Box p={2}>
-                    <TextField sx={{mb: 3}} helperText={errors.newUsername?"Please enter a username":''} label="Username" error={errors.newUsername} fullWidth {...register("newUsername", { required: true })}  />
-                    <TextField sx={{mb: 3}} helperText={errors.newPassword?"Please enter a password":''} label="Password" error={errors.newPassword} fullWidth {...register("newPassword", {required: true })} />
-                    <TextField fullWidth select defaultValue='' {...register("userType", { required: 'Please select a user type' })} error={errors.userType?.message} label="User Type">
+                    <TextField sx={{mb: 3}} helperText={errors.newUsername?.message} label="Username" error={errors.newUsername?.message.length>0} fullWidth {...register("newUsername", { required:"Please enter a username" })}  />
+                    <TextField sx={{mb: 3}} helperText={errors.newPassword?.message} label="Password" error={errors.newPassword?.message.length>0} fullWidth {...register("newPassword", {required: "Please enter a password" })} />
+                    <TextField fullWidth select defaultValue='' {...register("userType", { required: 'Please select a user type' })} error={errors.userType?.message.length>0} label="User Type">
                         {userTypes.map((type, index) => (
                             <MenuItem value={type} key={index}>{type}</MenuItem>
                         ))}
