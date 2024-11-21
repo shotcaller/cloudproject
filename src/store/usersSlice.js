@@ -4,16 +4,24 @@ import { getAllUsers } from "../data/apiLinks";
 
 const usersSlice = createSlice({
     name: 'users',
-    initialState: [],
+    initialState: {
+        users: []
+    },
     reducers: {
-        getUsers: (state, action) => {
+        getUsers: async (state) => {
             state = fetchAllUsers()
         }
     },
     extraReducers: (builder) => {
         builder.addCase(fetchAllUsers.fulfilled, (state, action) => {
-            if(action.payload.length>0)
-                state = action.payload;
+            console.log(action.payload)
+            if(action.payload.length>0){
+                state.users = [];
+                action.payload.forEach(element => {
+                    state.users.push(element);
+                });
+            }
+            
         })
     }
 })
@@ -27,7 +35,6 @@ export const fetchAllUsers = createAsyncThunk('getAllUsers', async () => {
     try {
         const res = await axios.get(getAllUsers);
         if(res && res.data){
-            console.log(res.data);
             return res.data;
         }
     } catch (e) {

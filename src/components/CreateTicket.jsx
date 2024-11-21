@@ -11,6 +11,7 @@ import { Loader } from './Loader';
 import { startLoader, stopLoader } from '../store/loaderSlice';
 import { openPopup } from '../store/popupSlice';
 import { createTicket } from '../data/apiLinks';
+import { fetchTickets } from '../store/ticketsSlice';
 
 const Transition = forwardRef((props, ref) => <Slide direction='up' ref={ref} {...props} />)
 
@@ -36,9 +37,9 @@ export const CreateTicket = (props) => {
                 <Typography sx={{ ml: 2, flex: 1 }} variant='h6' component="div">
                     {createTicketDialogTitle}
                 </Typography>
-                <Button autoFocus color='inherit' onClick={saveAndCreate}>
+                {/* <Button autoFocus color='inherit' onClick={saveAndCreate}>
                     Save
-                </Button>
+                </Button> */}
             </Toolbar>
         </AppBar>
         <CreateTicketForm handleCloseDialog={handleCloseDialog} />
@@ -55,9 +56,16 @@ const CreateTicketForm = (props) => {
     const {userId, userName, userRole, isLoggedIn } = useSelector((state) => state.user)
     const dispatch = useDispatch();
 
+    //Mapping list to just users names and not id, as autocomplete needs same structure of list
+    let usersSlice = useSelector((state) => state.users.users); 
+    let userList = usersSlice.map((user) => user.username);
+    userList = ["None", ...userList];
+
+
     const onSubmit = async (data) => {
         const createTicketPayload = {...data, priority, userId, userName};
-        console.log(createTicketPayload);
+        createTicketPayload['comments'] = [{username: userName, comment: data.ticketComment}];
+        createTicketPayload['createdBy'] = userName;
         dispatch(startLoader())
         try{
             const res = await axios.post(createTicket, createTicketPayload )
@@ -67,6 +75,7 @@ const CreateTicketForm = (props) => {
                     severity: 'success',
                     message: createTicketSuccess
                 }))
+                dispatch(fetchTickets())
             }
 
         } catch (e) {
@@ -98,8 +107,8 @@ const CreateTicketForm = (props) => {
                 ))}
             </ToggleButtonGroup>
 
-            <Autocomplete disabled={userRole==='Customer'} sx={{ mb: 3 }} disablePortal getOptionLabel={(option) => option.name} options={dummyUsersList}
-            renderInput={(params) => <TextField  {...params} {...register("assignedTo")} label={"Please select a user"} />}
+            <Autocomplete disabled={userRole==='Customer'} sx={{ mb: 3 }} disablePortal getOptionLabel={(option) => option} options={userList}
+            renderInput={(params) => <TextField  {...params} {...register("assignedTo", { value: 'None'})} label={"Please select a user"} />}
              />
 
             <TextField fullWidth multiline sx={{ mb: 3 }} label="Comments (if any)" {...register("ticketComment")} />

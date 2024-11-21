@@ -5,10 +5,12 @@ import { ticketDetailDescriptionPlaceholder } from '../data/defaultStrings';
 import { dummyUsersList, priorityList, statusList } from '../data/TicketDetailsLists';
 import { useTheme } from '@emotion/react';
 import { useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
 
 export const TicketDetails = (props) => {
     let {ticketid, ticketTitle, ticketDescription, ticketStatus, priority, assignedTo, comments} = props;
     const theme = useTheme();
+    const { register, handleSubmit } = useForm();
 
     const priorityColors = {
         'low' : theme.palette.success.main,
@@ -18,12 +20,18 @@ export const TicketDetails = (props) => {
 
     const secondaryColor = `${priorityColors[`${props.priority.toLowerCase()}`]}`;
 
+    const onSubmit = async (data) => {
+        console.log(data);
+
+        //props.closeMore();
+    }
+
 
 
     
 
   return (
-    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
             <DialogTitle sx={{ display: 'flex', justifyContent: "space-between", }}>
                 <Typography component="span" sx={{ background: secondaryColor, borderRadius: 1, p: 1}} variant='body2'>#{ticketid}</Typography> 
                 {ticketTitle}
@@ -35,12 +43,12 @@ export const TicketDetails = (props) => {
             <Box flex mb={3}>
                 <Box component="span">
                 <Typography component='span' mr={1}>Priority: </Typography>
-                <PriorityDropdown currentPriority={priority} />
+                <PriorityDropdown register={register} currentPriority={priority} />
                 </Box>
                 
                 <Box component="div" mt={3}>
                 {/* <Typography>Status: </Typography> */}
-                <StatusSelection currentStatus={ticketStatus} />
+                <StatusSelection register={register} currentStatus={ticketStatus} />
                 </Box>
 
 
@@ -48,23 +56,23 @@ export const TicketDetails = (props) => {
             </Box>
                 
                 {/* <Typography component="div">Assigned To: </Typography> */}
-                <AssignedToSelection assignedTo={assignedTo} />
+                <AssignedToSelection register={register} assignedTo={assignedTo} />
 
 
 
                 {/* <Typography component="div">Description: </Typography> */}
-                <TextField sx={{ mb: 3 }} fullWidth label={ticketDetailDescriptionPlaceholder} value={ticketDescription}/>
+                <TextField sx={{ mb: 3 }} {...register("ticketDescription")} fullWidth label={ticketDetailDescriptionPlaceholder} value={ticketDescription}/>
 
 
                 <Typography component="div">Comments: </Typography>
-                <TextField sx={{ mb: 3 }} label="Add comment" fullWidth multiline />
+                <TextField sx={{ mb: 3 }} label="Add comment" {...register("ticketComment")} fullWidth multiline />
                 <CommentsList comments={comments} />
 
             </DialogContent>
             <DialogActions>
-                <Button variant='contained' color='success' onClick={props.closeMore}>Save Changes</Button>
+                <Button type='submit'variant='contained' color='success'>Save Changes</Button>
             </DialogActions>
-    </>
+    </form>
   )
 }
 
@@ -193,8 +201,7 @@ const AssignedToSelection = (props) => {
     const [selectedUser, setSelectedUser] = useState(props.assignedTo??"");
     
     //Mapping list to just users names and not id, as autocomplete needs same structure of list
-    let usersSlice = useSelector((state) => state.users); 
-    console.log(usersSlice);
+    let usersSlice = useSelector((state) => state.users.users); 
     let userList = usersSlice.map((user) => user.username);
     userList = ["None", ...userList];
 
