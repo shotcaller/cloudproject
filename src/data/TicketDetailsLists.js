@@ -1,6 +1,7 @@
 export const priorityList = ["Low", "Medium", "High"];
 export const statusList = ["Open", "Active", "Closed"];
 export const dummyUsersList = [
+    { id: 0, name: "None"},
     { id: 1, name: "Rutu"},
     { id: 2, name: "Sam"},
     { id: 3, name: "Disha"},

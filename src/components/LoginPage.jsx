@@ -9,6 +9,7 @@ import { startLoader, stopLoader } from '../store/loaderSlice'
 import { openPopup } from '../store/popupSlice'
 import { userLoginFailed, userLoginSuccess, userRegFailed, userRegSuccess } from '../data/defaultStrings'
 import { loginUser, registerUser } from '../data/apiLinks'
+import { fetchTickets } from '../store/ticketsSlice'
 
 export const LoginPage = () => {
   return (
@@ -46,17 +47,19 @@ const LoginRegister = () => {
             dispatch(startLoader())
             try{   
                 const res = await axios.post(loginUser, loginPayload);
-                if(res) {
+                if(res && res.data) {
+                    console.log(res)
                     dispatch(login({
-                        userId: res.userid,
-                        userName: res.username,
-                        userRole: res.user_type 
+                        userId: res.data.userid,
+                        userName: res.data.username,
+                        userRole: res.data.user_type 
                     }));
                     //Show succcess message
                     dispatch(openPopup({
                         severity: 'success',
                         message: userLoginSuccess
                     }))
+                    dispatch(fetchTickets())
                 }
             } catch (e) {
                 console.error(e);

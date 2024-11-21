@@ -1,9 +1,11 @@
 export const appTitle = "Cloud5"
 export const appSubtitle = "a ticket management system"
-export const ticketDetailDescriptionPlaceholder = "Please click to add description"
+export const ticketDetailDescriptionPlaceholder = "Ticket Description"
 export const createTicketDialogTitle = "Create a ticket";
 export const bcryptSaltRounds = 10;
 export const userRegSuccess = "User registered successfully!"
 export const userRegFailed = "User already exists"
 export const userLoginSuccess = "User logged in successfully!";
 export const userLoginFailed = "Incorrect username or password";
+export const createTicketFailed = "Error while creating ticket."
+export const createTicketSuccess = "Ticket successfully created."

@@ -18,14 +18,15 @@ export const Ticket = (props) => {
 
     const secondaryColor = `${priorityColors[`${props.priority.toLowerCase()}`]}`;
     
-    const {id, title, status, priority, assignedTo,} = props;
+    let {ticketid, ticketTitle, ticketStatus, priority, assignedTo} = props;
+
   return (
     <>
     <Card>
         <CardContent>
             <Box>
-            <Typography variant='caption' component="div"  gutterBottom sx={{ background: secondaryColor }}>#{id}</Typography>
-            <Typography variant='h6' gutterBottom>{title}</Typography>
+            <Typography variant='caption' component="div"  gutterBottom sx={{ background: secondaryColor }}>#{ticketid}</Typography>
+            <Typography variant='h6' gutterBottom>{ticketTitle}</Typography>
             <Divider />
             </Box>
             

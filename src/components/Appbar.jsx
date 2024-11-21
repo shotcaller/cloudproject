@@ -1,20 +1,36 @@
-import { AppBar, Box, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material"
-import { Menu, AccountCircle, Mail, Dashboard, BugReport, ContactEmergency } from "@mui/icons-material"
+import { AppBar, Box, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, MenuItem, Toolbar, Typography, Menu } from "@mui/material"
+import { Menu as MenuIcon, AccountCircle, Dashboard, BugReport, ContactEmergency } from "@mui/icons-material"
 import { appbarList } from "../data/appbarList"
 import { useState } from "react"
 import { appSubtitle, appTitle } from "../data/defaultStrings"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { logout } from "../store/userSlice"
 
 export const Appbar = (props) => {
     const [toggleDrawer, setToggleDrawer] = useState(false);
     const handleDrawer = (drawerState) => {
         setToggleDrawer((toggle) => !toggle)
     }
-
-    const { isLoggedIn } = useSelector((state) => state.user);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const { isLoggedIn, userName } = useSelector((state) => state.user);
+    const dispatch = useDispatch();
 
     const changeMenuOnClick = (event, index) => {
         props.changeMenuPage(index);
+    }
+
+    const handleProfileMenuClose = () => {
+        setAnchorEl(null);
+    }
+
+    const handleProfileMenu = (e) => {
+        setAnchorEl(e.currentTarget);
+    }
+
+    const handleLogout = () => {
+        setAnchorEl(null);
+        dispatch(logout())
+        
     }
 
     const DrawerList = (
@@ -65,16 +81,23 @@ export const Appbar = (props) => {
                         color="inherit"
                         sx={{ mr:2 }}
                         onClick={handleDrawer}>
-                        <Menu />
+                        <MenuIcon />
                     </IconButton>}
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         {appTitle}
                     </Typography>
-                        { isLoggedIn && <IconButton
+                        { isLoggedIn && <><IconButton
+                            onClick={handleProfileMenu}
                             size="large"
                             color="inherit">
                             <AccountCircle />
-                        </IconButton>}
+                        </IconButton>
+                        <Menu anchorEl={anchorEl} anchorOrigin={{vertical: 'top', horizontal: 'right'}} 
+                        keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right'}} open={Boolean(anchorEl)} onClose={handleProfileMenuClose}>
+                            <Typography p={2}>Hi, {userName}!</Typography>
+                            <Divider />
+                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                            </Menu></>}
                 </Toolbar>
                 <Drawer open={toggleDrawer} onClose={handleDrawer}>
             {DrawerList}

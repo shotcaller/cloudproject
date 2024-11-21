@@ -1,14 +1,18 @@
 import { Card, Grid2, Paper, Stack, Typography } from '@mui/material'
 import React from 'react'
 import { Ticket } from './Ticket'
+import { useSelector } from 'react-redux'
 
 export const TicketsGrid = () => {
-  return (
+
+    const allTickets = useSelector((state) => state.tickets);
+
+    return (
     <>
         <Grid2 container spacing={2}>
-            <TicketBlock title={'Open'} />
-            <TicketBlock title={'Active'} />
-            <TicketBlock title={'Closed'} />
+            <TicketBlock title={'Open'} tickets={allTickets.open} />
+            <TicketBlock title={'Active'} tickets={allTickets.active} />
+            <TicketBlock title={'Closed'} tickets={allTickets.closed} />
         </Grid2>
     </>
   )
@@ -16,7 +20,7 @@ export const TicketsGrid = () => {
 
 const TicketBlock = (props) => {
 
-    const ticketList = ["Bug 1", "Bug 2", "Bug 3", "Bug 4", "Bug 5"]
+    const ticketList = props.tickets;
 
     return (
         <Grid2 size={4}>
@@ -26,7 +30,7 @@ const TicketBlock = (props) => {
                 <Typography variant='h5'>{props.title}</Typography>
                 </Card>
                 {
-                    ticketList.map((ticket, index) => <Ticket key={index} id={123456} title={ticket} priority="High" assignedTo="Ruturaj" />)
+                    ticketList.map((ticket, index) => <Ticket key={index} {...ticket} />)
                 }
                 
                 </Stack>

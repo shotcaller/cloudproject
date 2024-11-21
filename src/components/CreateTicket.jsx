@@ -1,13 +1,16 @@
 import { Close } from '@mui/icons-material';
 import { AppBar, Autocomplete, Box, Button, Dialog, IconButton, Paper, Slide, TextField, ToggleButton, ToggleButtonGroup, Toolbar, Typography } from '@mui/material'
 import React, { forwardRef, useState } from 'react'
-import { createTicketDialogTitle } from '../data/defaultStrings';
+import { createTicketDialogTitle, createTicketFailed, createTicketSuccess } from '../data/defaultStrings';
 import { useForm } from 'react-hook-form';
 import { dummyUsersList, priorityList } from '../data/TicketDetailsLists';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import delay from '../utils/delay';
 import { Loader } from './Loader';
+import { startLoader, stopLoader } from '../store/loaderSlice';
+import { openPopup } from '../store/popupSlice';
+import { createTicket } from '../data/apiLinks';
 
 const Transition = forwardRef((props, ref) => <Slide direction='up' ref={ref} {...props} />)
 
@@ -50,21 +53,32 @@ const CreateTicketForm = (props) => {
 
     const { register, handleSubmit, formState: { errors }} = useForm();
     const {userId, userName, userRole, isLoggedIn } = useSelector((state) => state.user)
-    const [loading, setLoading] = useState(false)
+    const dispatch = useDispatch();
 
     const onSubmit = async (data) => {
-        console.log({...data, priority, userId, userName});
-        setLoading(true)
-        await delay();
-        const res = await axios.post('', { ...data, priority, userId, userName } )
-        if(res){
-            props.handleCloseDialog();
-            setLoading(false)
+        const createTicketPayload = {...data, priority, userId, userName};
+        console.log(createTicketPayload);
+        dispatch(startLoader())
+        try{
+            const res = await axios.post(createTicket, createTicketPayload )
+            if(res){
+                props.handleCloseDialog();
+                dispatch(openPopup({
+                    severity: 'success',
+                    message: createTicketSuccess
+                }))
+            }
+
+        } catch (e) {
+            console.error(e);
+            dispatch(openPopup({
+                severity: 'error',
+                message: createTicketFailed
+            }))
+        } finally {
+            dispatch(stopLoader())
         }
-        else {
-            console.log("Error while creating ticket");
-            setLoading(false);
-        }
+        
     }
 
     const handlePriorityChange = (event, newPriority) => {
@@ -88,8 +102,10 @@ const CreateTicketForm = (props) => {
             renderInput={(params) => <TextField  {...params} {...register("assignedTo")} label={"Please select a user"} />}
              />
 
+            <TextField fullWidth multiline sx={{ mb: 3 }} label="Comments (if any)" {...register("ticketComment")} />
+            
+
              <Button variant='contained' type='submit'>Create Ticket</Button>
-             <Loader open={loading} />
         </Box>
     )
 }

@@ -1,47 +1,51 @@
 import { ArrowDropDown, Close } from '@mui/icons-material';
-import { Autocomplete, Box, Button, ButtonGroup, ClickAwayListener, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grow, IconButton, InputLabel, MenuItem, MenuList, Paper, Popper, Select, TextField, Typography } from '@mui/material'
+import { Autocomplete, Avatar, Box, Button, ButtonGroup, ClickAwayListener, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grow, IconButton, InputLabel, List, ListItem, ListItemAvatar, ListItemText, MenuItem, MenuList, Paper, Popper, Select, TextField, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { ticketDetailDescriptionPlaceholder } from '../data/defaultStrings';
 import { dummyUsersList, priorityList, statusList } from '../data/TicketDetailsLists';
 
 export const TicketDetails = (props) => {
-    const {id, title, description, status, priority, assignedTo} = props;
+    let {ticketid, ticketTitle, ticketDescription, ticketStatus, priority, assignedTo, comments} = props;
 
     
 
   return (
     <>
             <DialogTitle sx={{ display: 'flex', justifyContent: "space-between"}}>
-                <Typography component="span">#{id}</Typography> 
-                {title}
+                <Typography component="span">#{ticketid}</Typography> 
+                {ticketTitle}
                 <IconButton onClick={props.closeMore}>
                     <Close/>
                 </IconButton></DialogTitle>
-            <DialogContent dividers>
+            <DialogContent dividers sx={{ maxHeight: '400px', overflowY: 'auto'}}>
 
-            <Box flex flexDirection="column">
+            <Box flex mb={3}>
                 <Box component="span">
-                <Typography>Priority: </Typography>
+                <Typography component='span' mr={1}>Priority: </Typography>
                 <PriorityDropdown currentPriority={priority} />
                 </Box>
                 
-                <Box component="span">
-                <Typography>Status: </Typography>
-                <StatusSelection currentStatus={status} />
+                <Box component="div" mt={3}>
+                {/* <Typography>Status: </Typography> */}
+                <StatusSelection currentStatus={ticketStatus} />
                 </Box>
 
 
               
             </Box>
                 
-                <Typography component="div">Assigned To: </Typography>
+                {/* <Typography component="div">Assigned To: </Typography> */}
                 <AssignedToSelection assignedTo={assignedTo} />
 
 
 
-                <Typography component="div">Description: </Typography>
-                <TextField fullWidth label={ticketDetailDescriptionPlaceholder} value={description}/>
+                {/* <Typography component="div">Description: </Typography> */}
+                <TextField sx={{ mb: 3 }} fullWidth label={ticketDetailDescriptionPlaceholder} value={ticketDescription}/>
 
+
+                <Typography component="div">Comments: </Typography>
+                <TextField sx={{ mb: 3 }} label="Add comment" fullWidth multiline />
+                <CommentsList comments={comments} />
 
             </DialogContent>
             <DialogActions>
@@ -49,6 +53,60 @@ export const TicketDetails = (props) => {
             </DialogActions>
     </>
   )
+}
+
+const CommentsList = (props) => {
+    const comments = props.comments;
+    console.log(comments);
+
+    function stringToColor(string) {
+        let hash = 0;
+        let i;
+      
+        /* eslint-disable no-bitwise */
+        for (i = 0; i < string?.length; i += 1) {
+          hash = string.charCodeAt(i) + ((hash << 5) - hash);
+        }
+      
+        let color = '#';
+      
+        for (i = 0; i < 3; i += 1) {
+          const value = (hash >> (i * 8)) & 0xff;
+          color += `00${value.toString(16)}`.slice(-2);
+        }
+        /* eslint-enable no-bitwise */
+      
+        return color;
+      }
+
+      function stringAvatar(name) {
+        name = name?.toUpperCase();
+        return {
+          sx: {
+            bgcolor: stringToColor(name),
+          },
+          children: `${name?name[0]:'?'}`,
+        };
+      }
+      
+    return (
+        <>
+        <List dense sx={{ width: '100%'}}>
+            {
+                comments.map((comm, index) => {
+                    return (
+                        <ListItem key={index} >
+                            <ListItemAvatar>
+                                <Avatar {...stringAvatar(comm.username)} />
+                            </ListItemAvatar>
+                            <ListItemText primary={comm.username} secondary={comm.comment} />
+                        </ListItem>
+                    )
+                })
+            }
+        </List>
+        </>
+    )
 }
 
 const PriorityDropdown = (props) => {
@@ -120,21 +178,23 @@ const PriorityDropdown = (props) => {
 const AssignedToSelection = (props) => {
     //Getting assignedTo value prop
     const [selectedUser, setSelectedUser] = useState(props.assignedTo??"");
-
-    const users = dummyUsersList;
+    
+    //Mapping list to just users names and not id, as autocomplete needs same structure of list
+    const users = dummyUsersList.map((user) => user.name);
 
     return (
-        <Autocomplete
+        <Autocomplete 
             disablePortal
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => option}
+            value={selectedUser}
             options = {users}
-            renderInput={(params) => <TextField sx={{ zIndex: 99 }} {...params} value={selectedUser} label={"Please select a user"} />} />
+            renderInput={(params) => <TextField sx={{ zIndex: 99, mb: 3 }} {...params} value={selectedUser} label={"Assign To"} />} />
     )
 }
 
 const StatusSelection = (props) => {
 
-    const [selectedStatus, setSelectedStatus] = useState(props.status??"");
+    const [selectedStatus, setSelectedStatus] = useState(props.currentStatus??"");
 
     const statusListItems = statusList;
 
