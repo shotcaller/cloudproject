@@ -10,6 +10,7 @@ import { openPopup } from '../store/popupSlice'
 import { userLoginFailed, userLoginSuccess, userRegFailed, userRegSuccess } from '../data/defaultStrings'
 import { loginUser, registerUser } from '../data/apiLinks'
 import { fetchTickets } from '../store/ticketsSlice'
+import { fetchAllUsers, getUsers } from '../store/usersSlice'
 
 export const LoginPage = () => {
   return (
@@ -60,6 +61,7 @@ const LoginRegister = () => {
                         message: userLoginSuccess
                     }))
                     dispatch(fetchTickets())
+                    dispatch(fetchAllUsers())
                 }
             } catch (e) {
                 console.error(e);

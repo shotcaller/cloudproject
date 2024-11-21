@@ -3,16 +3,29 @@ import { Autocomplete, Avatar, Box, Button, ButtonGroup, ClickAwayListener, Dial
 import React, { useEffect, useRef, useState } from 'react'
 import { ticketDetailDescriptionPlaceholder } from '../data/defaultStrings';
 import { dummyUsersList, priorityList, statusList } from '../data/TicketDetailsLists';
+import { useTheme } from '@emotion/react';
+import { useSelector } from 'react-redux';
 
 export const TicketDetails = (props) => {
     let {ticketid, ticketTitle, ticketDescription, ticketStatus, priority, assignedTo, comments} = props;
+    const theme = useTheme();
+
+    const priorityColors = {
+        'low' : theme.palette.success.main,
+        'medium' : theme.palette.warning.light,
+        'high' : theme.palette.error.light
+    }
+
+    const secondaryColor = `${priorityColors[`${props.priority.toLowerCase()}`]}`;
+
+
 
     
 
   return (
     <>
-            <DialogTitle sx={{ display: 'flex', justifyContent: "space-between"}}>
-                <Typography component="span">#{ticketid}</Typography> 
+            <DialogTitle sx={{ display: 'flex', justifyContent: "space-between", }}>
+                <Typography component="span" sx={{ background: secondaryColor, borderRadius: 1, p: 1}} variant='body2'>#{ticketid}</Typography> 
                 {ticketTitle}
                 <IconButton onClick={props.closeMore}>
                     <Close/>
@@ -180,14 +193,18 @@ const AssignedToSelection = (props) => {
     const [selectedUser, setSelectedUser] = useState(props.assignedTo??"");
     
     //Mapping list to just users names and not id, as autocomplete needs same structure of list
-    const users = dummyUsersList.map((user) => user.name);
+    let usersSlice = useSelector((state) => state.users); 
+    console.log(usersSlice);
+    let userList = usersSlice.map((user) => user.username);
+    userList = ["None", ...userList];
+
 
     return (
         <Autocomplete 
             disablePortal
             getOptionLabel={(option) => option}
             value={selectedUser}
-            options = {users}
+            options = {userList}
             renderInput={(params) => <TextField sx={{ zIndex: 99, mb: 3 }} {...params} value={selectedUser} label={"Assign To"} />} />
     )
 }
