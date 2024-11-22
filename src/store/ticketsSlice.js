@@ -22,7 +22,7 @@ const ticketsSlice = createSlice({
                 state.closed = [];
 
                 action.payload.forEach(ticket => {
-                    ticket.ticketid = ticket.ticketid.length>6?ticket.ticketid.substring(0,6):ticket.ticketid;
+                    //ticket.ticketid = ticket.ticketid.length>6?ticket.ticketid.substring(0,6):ticket.ticketid;
                     ticket.assignedTo = ticket.assignedTo?ticket.assignedTo:'None';
                     state[`${ticket.ticketStatus.toLowerCase()}`].push(ticket)
                 });

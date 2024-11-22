@@ -2,6 +2,7 @@ import { Box, Button, Card, CardActions, CardContent, Container, Dialog, DialogT
 import { useTheme } from '@mui/material/styles';
 import React, { useState } from 'react'
 import { TicketDetails } from './TicketDetails';
+import { trimTicketId } from '../utils/ticketIdShortener';
 
 export const Ticket = (props) => {
     const [openMore, setOpenMore] = useState(false);
@@ -25,7 +26,7 @@ export const Ticket = (props) => {
     <Card>
         <CardContent>
             <Box>
-            <Typography variant='caption' component="div"  gutterBottom sx={{ background: secondaryColor }}>#{ticketid}</Typography>
+            <Typography variant='caption' component="div"  gutterBottom sx={{ background: secondaryColor }}>#{trimTicketId(ticketid)}</Typography>
             <Typography variant='h6' gutterBottom>{ticketTitle}</Typography>
             <Divider />
             </Box>

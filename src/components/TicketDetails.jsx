@@ -1,17 +1,29 @@
 import { ArrowDropDown, Close } from '@mui/icons-material';
 import { Autocomplete, Avatar, Box, Button, ButtonGroup, ClickAwayListener, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grow, IconButton, InputLabel, List, ListItem, ListItemAvatar, ListItemText, MenuItem, MenuList, Paper, Popper, Select, TextField, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
-import { ticketDetailDescriptionPlaceholder } from '../data/defaultStrings';
+import { ticketDetailDescriptionPlaceholder, updateTicketFailed, updateTicketSuccess } from '../data/defaultStrings';
 import { dummyUsersList, priorityList, statusList } from '../data/TicketDetailsLists';
 import { useTheme } from '@emotion/react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
+import { startLoader, stopLoader } from '../store/loaderSlice';
+import axios from 'axios';
+import { updateTicket } from '../data/apiLinks';
+import { trimTicketId } from '../utils/ticketIdShortener';
+import { openPopup } from '../store/popupSlice';
+import { fetchTickets } from '../store/ticketsSlice';
 
 export const TicketDetails = (props) => {
     let {ticketid, ticketTitle, ticketDescription, ticketStatus, priority, assignedTo, comments} = props;
+
     const theme = useTheme();
     const { register, handleSubmit } = useForm();
+    const dispatch = useDispatch();
+    const { userName, userId } = useSelector((state) => state.user);
 
+    const [newPriority, setNewPriority] = useState(priority);
+    const [newStatus, setNewStatus] = useState(ticketStatus);
+ 
     const priorityColors = {
         'low' : theme.palette.success.main,
         'medium' : theme.palette.warning.light,
@@ -21,9 +33,36 @@ export const TicketDetails = (props) => {
     const secondaryColor = `${priorityColors[`${props.priority.toLowerCase()}`]}`;
 
     const onSubmit = async (data) => {
-        console.log(data);
+        console.log(data)
+        let updatePayload = { ticketid, username: userName, userid: userId, updates: {
+            ticketTitle, priority: newPriority, ticketStatus: newStatus, comments: {
+                username: userName,
+                comment: data.ticketComment
+            }, assignedTo: data.assignedTo
+        }}
+        console.log(updatePayload);
+        dispatch(startLoader())
+        try{
+            const res = await axios.put(updateTicket, updatePayload )
+            if(res){
+                dispatch(openPopup({
+                    severity: 'success',
+                    message: updateTicketSuccess
+                }))
+                props.closeMore();
+                dispatch(fetchTickets())
 
-        //props.closeMore();
+            }
+
+        } catch (e) {
+            console.error(e);
+            dispatch(openPopup({
+                severity: 'error',
+                message: updateTicketFailed
+            }))
+        } finally {
+            dispatch(stopLoader())
+        }
     }
 
 
@@ -33,7 +72,7 @@ export const TicketDetails = (props) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
             <DialogTitle sx={{ display: 'flex', justifyContent: "space-between", }}>
-                <Typography component="span" sx={{ background: secondaryColor, borderRadius: 1, p: 1}} variant='body2'>#{ticketid}</Typography> 
+                <Typography component="span" sx={{ background: secondaryColor, borderRadius: 1, p: 1}} variant='body2'>#{trimTicketId(ticketid)}</Typography> 
                 {ticketTitle}
                 <IconButton onClick={props.closeMore}>
                     <Close/>
@@ -43,12 +82,12 @@ export const TicketDetails = (props) => {
             <Box flex mb={3}>
                 <Box component="span">
                 <Typography component='span' mr={1}>Priority: </Typography>
-                <PriorityDropdown register={register} currentPriority={priority} />
+                <PriorityDropdown updatePriority={setNewPriority} currentPriority={priority} />
                 </Box>
                 
                 <Box component="div" mt={3}>
                 {/* <Typography>Status: </Typography> */}
-                <StatusSelection register={register} currentStatus={ticketStatus} />
+                <StatusSelection updateStatus={setNewStatus} currentStatus={ticketStatus} />
                 </Box>
 
 
@@ -148,6 +187,7 @@ const PriorityDropdown = (props) => {
 
     const handleMenuItemClick = (event, option) => {
         setSelectedPriority(option);
+        props.updatePriority(option);
         setOpen(false);
     }
 
@@ -198,7 +238,8 @@ const PriorityDropdown = (props) => {
 
 const AssignedToSelection = (props) => {
     //Getting assignedTo value prop
-    const [selectedUser, setSelectedUser] = useState(props.assignedTo??"");
+    const { assignedTo, register } = props;
+    const [selectedUser, setSelectedUser] = useState(assignedTo??"");
     
     //Mapping list to just users names and not id, as autocomplete needs same structure of list
     let usersSlice = useSelector((state) => state.users.users); 
@@ -210,9 +251,10 @@ const AssignedToSelection = (props) => {
         <Autocomplete 
             disablePortal
             getOptionLabel={(option) => option}
-            value={selectedUser}
             options = {userList}
-            renderInput={(params) => <TextField sx={{ zIndex: 99, mb: 3 }} {...params} value={selectedUser} label={"Assign To"} />} />
+            value={selectedUser}
+            onChange={(e, value) => setSelectedUser(value)}
+            renderInput={(params) => <TextField {...register("assignedTo", {value: selectedUser} )}  sx={{ zIndex: 99, mb: 3 }} {...params} label={"Assign To"} />} />
     )
 }
 
@@ -220,10 +262,9 @@ const StatusSelection = (props) => {
 
     const [selectedStatus, setSelectedStatus] = useState(props.currentStatus??"");
 
-    const statusListItems = statusList;
-
     const handleStatusChange = (event) => {
         setSelectedStatus(event.target.value);
+        props.updateStatus(event.target.value);
     }
 
 

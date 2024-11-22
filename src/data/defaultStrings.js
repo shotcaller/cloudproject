@@ -9,3 +9,5 @@ export const userLoginSuccess = "User logged in successfully!";
 export const userLoginFailed = "Incorrect username or password";
 export const createTicketFailed = "Error while creating ticket."
 export const createTicketSuccess = "Ticket successfully created."
+export const updateTicketFailed = "Error while updating ticket."
+export const updateTicketSuccess = "Ticket updated successfully!"
