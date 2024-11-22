@@ -12,6 +12,7 @@ import { updateTicket } from '../data/apiLinks';
 import { trimTicketId } from '../utils/ticketIdShortener';
 import { openPopup } from '../store/popupSlice';
 import { fetchTickets } from '../store/ticketsSlice';
+import moment from 'moment';
 
 export const TicketDetails = (props) => {
     let {ticketid, ticketTitle, ticketDescription, ticketStatus, priority, assignedTo, comments} = props;
@@ -160,6 +161,7 @@ const CommentsList = (props) => {
                                 <Avatar {...stringAvatar(comm.username)} />
                             </ListItemAvatar>
                             <ListItemText primary={comm.username} secondary={comm.comment} />
+                            <Typography variant='caption'>{moment(comm.timestamp).format('YYYY-MM-DD hh:mm:ss')}</Typography>
                         </ListItem>
                     )
                 })

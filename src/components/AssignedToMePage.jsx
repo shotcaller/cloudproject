@@ -1,6 +1,7 @@
 import { Box, Grid2, Paper, Stack, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Ticket } from './Ticket'
+import { useSelector } from 'react-redux'
 
 export const AssignedToMePage = () => {
   return (
@@ -17,7 +18,19 @@ export const AssignedToMePage = () => {
 
 const AssignedToMeList = () => {
 
-    const ticketList = ["Bug 1", "Bug 2", "Bug 3", "Bug 4", "Bug 5"]
+    const [myTickets, setMyTickets] = useState([])
+    const { userName } = useSelector((state) => state.user); 
+    const tickets = useSelector((state) => state.tickets);
+    useEffect(() => {
+        const allTix = [...tickets.open,...tickets.active,...tickets.closed];
+        let myTix = [];
+        allTix.forEach((element) => {
+            if(element.assignedTo=== userName) {
+                myTix.push(element)
+              }
+        })
+        setMyTickets(myTix);
+    },[tickets]);
 
     return (
         <Grid2 container spacing={2}>
@@ -25,7 +38,7 @@ const AssignedToMeList = () => {
                 <Paper sx={{ background: '#F0F0F0', padding: 1 }}>
                     <Stack spacing={2}>
                     {
-                    ticketList.map((ticket, index) => <Ticket key={index} ticketid={123456} ticketTitle={ticket} priority="High" assignedTo="Ruturaj" />)
+                    myTickets.map((ticket, index) => <Ticket key={index} ticketid={ticket.ticketid} ticketTitle={ticket.ticketTitle} priority={ticket.priority} assignedTo={ticket.assignedTo} {...ticket} />)
                     }
                     </Stack>
                 </Paper>
