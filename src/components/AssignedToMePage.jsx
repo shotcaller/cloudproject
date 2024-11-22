@@ -25,7 +25,7 @@ const AssignedToMeList = () => {
                 <Paper sx={{ background: '#F0F0F0', padding: 1 }}>
                     <Stack spacing={2}>
                     {
-                    ticketList.map((ticket, index) => <Ticket key={index} id={123456} title={ticket} priority="High" assignedTo="Ruturaj" />)
+                    ticketList.map((ticket, index) => <Ticket key={index} ticketid={123456} ticketTitle={ticket} priority="High" assignedTo="Ruturaj" />)
                     }
                     </Stack>
                 </Paper>

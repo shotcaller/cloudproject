@@ -18,7 +18,7 @@ const usersSlice = createSlice({
             if(action.payload.length>0){
                 state.users = [];
                 action.payload.forEach(element => {
-                    state.users.push(element);
+                    state.users.push({...element, userRole: element.user_type});
                 });
             }
             

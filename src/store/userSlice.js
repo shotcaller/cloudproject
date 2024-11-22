@@ -12,7 +12,7 @@ export const userSlice = createSlice({
         login: (state, action) => {
             state.userId = action.payload.userId;
             state.userName = action.payload.userName;
-            state.userRole = action.payload.userRole;
+            state.userRole = action.payload.user_type;
             state.isLoggedIn = true;
         },
         logout: (state) => {
