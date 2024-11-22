@@ -36,11 +36,14 @@ export const TicketDetails = (props) => {
     const onSubmit = async (data) => {
         console.log(data)
         let updatePayload = { ticketid, username: userName, userid: userId, updates: {
-            ticketTitle, priority: newPriority, ticketStatus: newStatus, comments: {
-                username: userName,
-                comment: data.ticketComment
-            }, assignedTo: data.assignedTo
+            ticketTitle, priority: newPriority, ticketStatus: newStatus, assignedTo: data.assignedTo
         }}
+        if(data.ticketComment){
+            updatePayload.updates.comments = {
+                    username: userName,
+                    comment: data.ticketComment
+                }
+        }
         console.log(updatePayload);
         dispatch(startLoader())
         try{
