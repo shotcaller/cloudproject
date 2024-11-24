@@ -110,11 +110,11 @@ const LoginRegister = () => {
                 <Box component='form' onSubmit={handleSubmit(onSubmitLogin)}>
                 {pageType==='Login' && <Box p={2}>
                     <TextField sx={{mb: 3}} helperText={errors.username?.message} label="Username" error={errors.username?.message.length>0} fullWidth {...register("username", { required:"Please enter a username" })}  />
-                    <TextField sx={{mb: 3}} helperText={errors.username?.message} label="Password" error={errors.password?.message.length>0} fullWidth {...register("password", {required:"Please enter a password" })} />
+                    <TextField sx={{mb: 3}} type='password' helperText={errors.username?.message} label="Password" error={errors.password?.message.length>0} fullWidth {...register("password", {required:"Please enter a password" })} />
                 </Box>}
                 {pageType==='Register' && <Box p={2}>
                     <TextField sx={{mb: 3}} helperText={errors.newUsername?.message} label="Username" error={errors.newUsername?.message.length>0} fullWidth {...register("newUsername", { required:"Please enter a username" })}  />
-                    <TextField sx={{mb: 3}} helperText={errors.newPassword?.message} label="Password" error={errors.newPassword?.message.length>0} fullWidth {...register("newPassword", {required: "Please enter a password" })} />
+                    <TextField sx={{mb: 3}} type='password' helperText={errors.newPassword?.message} label="Password" error={errors.newPassword?.message.length>0} fullWidth {...register("newPassword", {required: "Please enter a password" })} />
                     <TextField fullWidth select defaultValue='' {...register("userType", { required: 'Please select a user type' })} error={errors.userType?.message.length>0} label="User Type">
                         {userTypes.map((type, index) => (
                             <MenuItem value={type} key={index}>{type}</MenuItem>
