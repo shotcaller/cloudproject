@@ -2,6 +2,8 @@
 
 This is the **frontend** of the Ticket/Bug Tracking System, developed using **React** and **Vite**. The application allows users to interact with the backend APIs to manage tickets efficiently, providing role-based access and real-time updates.
 
+Project hosted on AWS Amplify: https://master.dv431qeo7e3cj.amplifyapp.com/
+
 ---
 
 ## **Table of Contents**
