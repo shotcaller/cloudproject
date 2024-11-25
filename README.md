@@ -130,5 +130,3 @@ Ensure the backend API URL in your `.env` file matches the deployed backend API 
 This project is licensed under the [MIT License](LICENSE).
 
 ---
-
-Let me know if you'd like to customize it further! 😊
